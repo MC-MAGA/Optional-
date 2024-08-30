@@ -1,0 +1,162 @@
+Skip to content
+Navigation Menu
+
+Code
+Issues
+Editing workflow file idle-issues.yml in maga_infodex
+Breadcrumbsmaga_infodex/.github/workflows
+/
+idle-issues.yml
+in
+main
+
+Edit
+
+Preview
+ @@ -1,4 +1,27 @@
+name: "Mark issues and pull requests as idle"
+            - name: Setup Node.js environment
+  uses: actions/setup-node@v4.0.2
+  with:
+    # Set always-auth in npmrc.
+    always-auth: # optional, default is false
+    # Version Spec of the version to use. Examples: 12.x, 10.15.1, >=10.15.0.
+    node-version: # optional
+    # File containing the version Spec of the version to use.  Examples: package.json, .nvmrc, .node-version, .tool-versions.
+    node-version-file: # optional
+    # Target architecture for Node to use. Examples: x86, x64. Will use system architecture by default.
+    architecture: # optional
+    # Set this option if you want the action to check for the latest available version that satisfies the version spec.
+    check-latest: # optional
+    # Optional registry to set up for auth. Will set the registry in a project level .npmrc and .yarnrc file, and set up auth to read in from env.NODE_AUTH_TOKEN.
+    registry-url: # optional
+    # Optional scope for authenticating against scoped registries. Will fall back to the repository owner when using the GitHub Packages registry (https://npm.pkg.github.com/).
+    scope: # optional
+    # Used to pull node distributions from node-versions. Since there's a default, this is typically not supplied by the user. When running this action on github.com, the default value is sufficient. When running on GHES, you can pass a personal access token for github.com if you are experiencing rate limiting.
+    token: # optional, default is ${{ github.server_url == 'https://github.com' && github.token || '' }}
+    # Used to specify a package manager for caching in the default directory. Supported values: npm, yarn, pnpm.
+    cache: # optional
+    # Used to specify the path to a dependency file: package-lock.json, yarn.lock, etc. Supports wildcards or a list of file names for caching multiple dependencies.
+    cache-dependency-path: # optional
+    name       : "Mark issues and pull requests as idle"
+ on:
+ on:
+   schedule:
+   schedule:
+     - cron: "49 11,23 * * *"
+     - cron: "49 11,23 * * *"
+Copied!
+Help Panel navigation
+Marketplace
+Documentation
+Getting started with a workflow
+To help you get started, this guide shows you some basic examples. For the full GitHub Actions documentation on workflows, see "Configuring workflows."
+
+Customizing when workflow runs are triggered
+Set your workflow to run on push events to the main and release/* branches
+
+on:
+  push:
+    branches:
+    - main
+    - release/*
+Set your workflow to run on pull_request events that target the main branch
+
+on:
+  pull_request:
+    branches:
+    - main
+Set your workflow to run every day of the week from Monday to Friday at 2:00 UTC
+
+on:
+  schedule:
+  - cron: "0 2 * * 1-5"
+For more information, see "Events that trigger workflows."
+
+Manually running a workflow
+To manually run a workflow, you can configure your workflow to use the workflow_dispatch event. This enables a "Run workflow" button on the Actions tab.
+
+on:
+  workflow_dispatch:
+For more information, see "Manually running a workflow."
+
+Running your jobs on different operating systems
+GitHub Actions provides hosted runners for Linux, Windows, and macOS.
+
+To set the operating system for your job, specify the operating system using runs-on:
+
+jobs:
+  my_job:
+    name: deploy to staging
+    runs-on: ubuntu-22.04
+The available virtual machine types are:
+
+ubuntu-latest, ubuntu-22.04, or ubuntu-20.04
+windows-latest, windows-2022, or windows-2019
+macos-latest, macos-13, or macos-12
+For more information, see "Virtual environments for GitHub Actions."
+
+Using an action
+Actions are reusable units of code that can be built and distributed by anyone on GitHub. You can find a variety of actions in GitHub Marketplace, and also in the official Actions repository.
+
+To use an action, you must specify the repository that contains the action. We also recommend that you specify a Git tag to ensure you are using a released version of the action.
+
+- name: Setup Node
+  uses: actions/setup-node@v4
+  with:
+    node-version: '20.x'
+For more information, see "Workflow syntax for GitHub Actions."
+
+Running a command
+You can run commands on the job's virtual machine.
+
+- name: Install Dependencies
+  run: npm install
+For more information, see "Workflow syntax for GitHub Actions."
+
+Running a job across a matrix of operating systems and runtime versions
+You can automatically run a job across a set of different values, such as different versions of code libraries or operating systems.
+
+For example, this job uses a matrix strategy to run across 3 versions of Node and 3 operating systems:
+
+jobs:
+  test:
+    name: Test on node ${{ matrix.node_version }} and ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        node_version: ['18.x', '20.x']
+        os: [ubuntu-latest, windows-latest, macOS-latest]
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Use Node.js ${{ matrix.node_version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node_version }}
+
+    - name: npm install, build and test
+      run: |
+        npm install
+        npm run build --if-present
+        npm test
+For more information, see "Workflow syntax for GitHub Actions."
+
+Running steps or jobs conditionally
+GitHub Actions supports conditions on steps and jobs using data present in your workflow context.
+
+For example, to run a step only as part of a push and not in a pull_request, you can specify a condition in the if: property based on the event name:
+
+steps:
+- run: npm publish
+  if: github.event_name == 'push'
+For more information, see "Contexts and expression syntax for GitHub Actions.": "Mark issues and pull requests as idle"
+on:
+  schedule:
+    - cron: "49 11,23 * * *"
+
+jobs:
+  idle:
+    uses: mdn/workflows/.github/workflows/idle.yml@main
+    with:
+      target-repo: "mdn/content"
